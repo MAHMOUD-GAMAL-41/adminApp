@@ -6,8 +6,9 @@
             <data android:scheme="mailto" />
         </intent>
     </queries>
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="admin"
+        android:label="Admin app"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

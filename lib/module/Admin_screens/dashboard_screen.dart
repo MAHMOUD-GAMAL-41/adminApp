@@ -15,12 +15,19 @@ class DashboardScreen extends StatelessWidget {
         .doc(uId)
         .collection('products')
         .snapshots();
-    Stream<QuerySnapshot> orderStream = FirebaseFirestore.instance
+    Stream<QuerySnapshot> aprovalorderStream = FirebaseFirestore.instance
         .collection('admins')
         .doc(uId)
         .collection('orders')
         .doc('orders')
         .collection('Approve')
+        .snapshots();
+    Stream<QuerySnapshot> inprogressOrderStream = FirebaseFirestore.instance
+        .collection('admins')
+        .doc(uId)
+        .collection('orders')
+        .doc('orders')
+        .collection('In Progress')
         .snapshots();
 
     return SizedBox(
@@ -37,7 +44,9 @@ class DashboardScreen extends StatelessWidget {
               AdminCubit.get(context)
                   .firebaseAnalytic('Total Products ', productStream),
               AdminCubit.get(context)
-                  .firebaseAnalytic('Total Orders', orderStream),
+                  .firebaseAnalytic('Approval Orders', aprovalorderStream),
+              AdminCubit.get(context)
+                  .firebaseAnalytic('Inprogress Orders', inprogressOrderStream),
               analyticWedget(
                   title: 'Total Categories',
                   value: AdminCubit.get(context)

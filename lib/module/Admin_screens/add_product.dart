@@ -4,25 +4,29 @@ import 'package:admin/module/fitting/guide.dart';
 import 'package:admin/shared/Styles/colors.dart';
 import 'package:admin/module/Admin_screens/data_of_product_picker.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_admin_scaffold/admin_scaffold.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import '../../shared/components/component.dart';
-import 'dashboard_screen.dart';
+import 'ImagePickerWeb.dart';
 import 'view_product.dart';
 import 'multi_image_picker.dart';
 import '../homescreen/cubit/cubit.dart';
+import 'package:flutter/foundation.dart';
+
 import '../homescreen/cubit/states.dart';
 
-class AddProductScreen extends StatelessWidget {
+class AddProductScreen extends StatefulWidget {
   static const String id = 'add-products';
 
   AddProductScreen({Key? key}) : super(key: key);
 
+  @override
+  State<AddProductScreen> createState() => _AddProductScreenState();
+}
+
+class _AddProductScreenState extends State<AddProductScreen> {
   var formKey = GlobalKey<FormState>();
 
   var nameController = TextEditingController();
@@ -35,6 +39,9 @@ class AddProductScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AdminCubit.get(context).data.clear();
+    AdminCubit.get(context).colors.clear();
+    AdminCubit.get(context).SelecetedCategory = null;
     return BlocConsumer<AdminCubit, AdminStates>(
         builder: (context, state) => Form(
               key: formKey,
@@ -53,7 +60,7 @@ class AddProductScreen extends StatelessWidget {
                             line: 1,
                             controller: nameController,
                             validator: (value) {
-                              if (value == null) {
+                              if (value!.isEmpty) {
                                 return ' please Enter Product Name';
                               }
                             }),
@@ -103,6 +110,7 @@ class AddProductScreen extends StatelessWidget {
                             if (value == null) {
                               return 'Please select category.';
                             }
+                            return null;
                           },
                           onChanged: (value) {
                             AdminCubit.get(context).selectedCategory(value);
@@ -116,10 +124,10 @@ class AddProductScreen extends StatelessWidget {
                               hint: '0.0',
                               line: 1,
                               controller: priceController,
-                             type: TextInputType.number,
-                                  validator: (value) {
-                                if (value == null) {
-                                  return 'Please Enter Product Price';
+                              type: TextInputType.number,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Please Enter Price.';
                                 }
                               },
                             )),
@@ -128,12 +136,11 @@ class AddProductScreen extends StatelessWidget {
                             ),
                             Expanded(
                                 child: AddProductInputField(
-                              title: 'Offer',
-                              hint: ' 0 %',
-                              line: 1,
-                              controller: offerController,
-                              type: TextInputType.number
-                            )),
+                                    title: 'Offer',
+                                    hint: ' 0 %',
+                                    line: 1,
+                                    controller: offerController,
+                                    type: TextInputType.number)),
                           ],
                         ),
                         SizedBox(
@@ -160,10 +167,16 @@ class AddProductScreen extends StatelessWidget {
                                               BorderRadius.circular(15)),
                                       child: Stack(
                                         children: [
-                                          Image.file(File(
-                                              AdminCubit.get(context)
-                                                  .photos[index]
-                                                  .path)),
+                                          kIsWeb
+                                              ? Image.memory(
+                                                  AdminCubit.get(context)
+                                                      .webPhotos[index],
+                                                  fit: BoxFit.fitHeight,
+                                                )
+                                              : Image.file(File(
+                                                  AdminCubit.get(context)
+                                                      .photos[index]
+                                                      .path)),
                                           Positioned(
                                               top: -7,
                                               right: -7,
@@ -172,6 +185,10 @@ class AddProductScreen extends StatelessWidget {
                                                     AdminCubit.get(context)
                                                         .removePhotoFromList(
                                                             index);
+                                                    if (kIsWeb)
+                                                      AdminCubit.get(context)
+                                                          .removeWebPhotoFromList(
+                                                              index);
                                                   },
                                                   icon: Icon(
                                                     Icons.close,
@@ -201,7 +218,9 @@ class AddProductScreen extends StatelessWidget {
                                     showDialog(
                                         context: context,
                                         builder: (context) {
-                                          return MultiImagegPicker();
+                                          return kIsWeb
+                                              ? ImageUploader()
+                                              : MultiImagegPicker();
                                         });
                                   },
                                   child: Neumorphic(
@@ -215,7 +234,7 @@ class AddProductScreen extends StatelessWidget {
                                                       .photos
                                                       .length >
                                                   0
-                                              ? 'Add More Image '
+                                              ? 'Add More Image'
                                               : 'Add Image',
                                           style: TextStyle(
                                               color: Colors.white,
@@ -277,7 +296,7 @@ class AddProductScreen extends StatelessWidget {
                           line: 4,
                           controller: descriptionController,
                           validator: (value) {
-                            if (value == null) {
+                            if (value!.isEmpty) {
                               return 'Please Enter Product Description';
                             }
                           },
@@ -288,23 +307,25 @@ class AddProductScreen extends StatelessWidget {
                         Row(
                           children: [
                             Text('Virtual Images'),
-                            Spacer(),
-                            Switch(value: AdminCubit.get(context).switchVirtualImage, onChanged: (val){
-                              AdminCubit.get(context).switchboolval(val);
-                            })
                           ],
                         ),
-                        if(AdminCubit.get(context).switchVirtualImage) InkWell(
-                          onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>GuideScreen()));
+                        SizedBox(
+                          height: 10,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => GuideScreen()));
                           },
                           child: Neumorphic(
-                            style:
-                            NeumorphicStyle(color: MyColors.orange),
+                            style: NeumorphicStyle(color: MyColors.orange),
                             child: Container(
                               height: 50,
                               child: Center(
-                                child: Text('Add Virtual Images',
+                                child: Text(
+                                  'Add Virtual Images',
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
@@ -321,34 +342,34 @@ class AddProductScreen extends StatelessWidget {
                           if (formKey.currentState!.validate()) {
                             if (AdminCubit.get(context).data.keys.length != 0) {
                               if (AdminCubit.get(context).photos.length != 0) {
-
-                                AdminCubit.get(context)
-                                    .uploadProductPhoto(context)
-                                    .then((value) {
-                                      Future.wait([AdminCubit.get(context).uploadVirtualPhotoStorage()]).then((value)async {
-                                        await Future.delayed(Duration(milliseconds: 500)).then((value) {
-                                          AdminCubit.get(context).addProduct(
-                                              productName: nameController.text,
-                                              description: descriptionController.text,
-                                              category: AdminCubit.get(context)
-                                                  .SelecetedCategory,
-                                              brandName: AdminCubit.get(context)
-                                                  .model!
-                                                  .brandName,
-                                              price: priceController.text,
-                                              offer: offerController.text,
-                                              photos: AdminCubit.get(context).PhotosURL,
-                                              data: AdminCubit.get(context).data
-                                          );
-                                        });
-                                      });
-
-                                });
+                                if (AdminCubit.get(context)
+                                        .virtualPhoto
+                                        .keys
+                                        .length !=
+                                    0) {
+                                  AdminCubit.get(context)
+                                      .uploadProductPhoto()
+                                      .then((value) {
+                                    AdminCubit.get(context)
+                                        .uploadVirtualPhotoStorage();
+                                  });
+                                } else {
+                                  defaultSnackBar(
+                                      context: context,
+                                      title: 'Please Add Virtual Image',
+                                      color: Colors.red);
+                                }
                               } else {
-                                return defaultSnackBar(context: context, title: 'Please Add Photos first', color: Colors.red);
+                                return defaultSnackBar(
+                                    context: context,
+                                    title: 'Please Add Images ',
+                                    color: Colors.red);
                               }
                             } else {
-                              return defaultSnackBar(context: context, title: 'Please Add Data Of Product first', color: Colors.red);
+                              return defaultSnackBar(
+                                  context: context,
+                                  title: 'Please Add Data Of Product',
+                                  color: Colors.red);
                             }
                           }
                         }, context),
@@ -366,15 +387,51 @@ class AddProductScreen extends StatelessWidget {
             AdminCubit.get(context).PhotosURL.clear();
             AdminCubit.get(context).virphotos.clear();
             AdminCubit.get(context).virtualPhoto.clear();
-            AdminCubit.get(context).virtualImages.clear();
+            AdminCubit.get(context).colors.clear();
             AdminCubit.get(context).SelecetedCategory = null;
-            defaultSnackBar(context: context, title: "Product Added Successful", color: Colors.green);
-            AdminCubit.get(context).currentScreen( const AdminMenuItem(
-                title: 'Manage Product',
-                route: ViewProductScreen.id,
-                icon: Icons.edit
-            ),
+            defaultSnackBar(
+                context: context,
+                title: "Product Added Successful",
+                color: Colors.green);
+            AdminCubit.get(context).currentScreen(
+              const AdminMenuItem(
+                  title: 'Manage Product',
+                  route: ViewProductScreen.id,
+                  icon: Icons.edit),
             );
+          }
+          if (state is UploadVirtualPhotostofirebaseSuccessState) {
+            AdminCubit.get(context)
+                .addProduct(
+                    productName: nameController.text,
+                    description: descriptionController.text,
+                    category: AdminCubit.get(context).SelecetedCategory,
+                    brandName: AdminCubit.get(context).model!.brandName,
+                    price: priceController.text,
+                    offer: offerController.text,
+                    virtual: AdminCubit.get(context).virphotos,
+                    photos: AdminCubit.get(context).PhotosURL,
+                    data: AdminCubit.get(context).data
+            ).then((e) {
+              EasyLoading.dismiss();
+              AdminCubit.get(context).data.clear();
+              AdminCubit.get(context).photos.clear();
+              AdminCubit.get(context).PhotosURL.clear();
+              AdminCubit.get(context).virphotos.clear();
+              AdminCubit.get(context).virtualPhoto.clear();
+              AdminCubit.get(context).colors.clear();
+              AdminCubit.get(context).SelecetedCategory = null;
+              defaultSnackBar(
+                  context: context,
+                  title: "Product Added Successful",
+                  color: Colors.green);
+              AdminCubit.get(context).currentScreen(
+                const AdminMenuItem(
+                    title: 'Manage Product',
+                    route: ViewProductScreen.id,
+                    icon: Icons.edit),
+              );
+            });
           }
         });
   }

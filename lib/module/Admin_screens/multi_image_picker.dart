@@ -1,11 +1,8 @@
 import 'dart:io';
 
 import 'package:admin/module/homescreen/cubit/cubit.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
-import 'package:galleryimage/galleryimage.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../shared/Styles/colors.dart';
@@ -18,7 +15,6 @@ class MultiImagegPicker extends StatefulWidget {
 class _MultiImagegPickerState extends State<MultiImagegPicker> {
   List<XFile> productPhoto=[];
   final ImagePicker picker = ImagePicker();
-  bool uploading = false;
 
   Future getImagesOfProducts() async {
     final pickedFile = await picker.pickMultiImage();
@@ -154,3 +150,4 @@ class _MultiImagegPickerState extends State<MultiImagegPicker> {
     );
   }
 }
+

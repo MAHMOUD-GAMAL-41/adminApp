@@ -1,4 +1,3 @@
-
 class ProductModel {
   String? productName; //
   String? description; //
@@ -9,10 +8,10 @@ class ProductModel {
   String? price; //
   String? offer; //
   List? photos; //
-  int bestSeller=0; //
-  double ?rate;
+  int bestSeller = 0; //
+  double? rate;
   late Map<String, Map<String, dynamic>> data; //
-  late Map<String,String> ? virtualImage; //
+  late Map<String, String> virtualImage; //
 
   ProductModel({
     required this.productName,
@@ -32,12 +31,12 @@ class ProductModel {
     category = json['category'];
     price = json['price'];
     offer = json['offer'];
-    photos = json['photos'] ;
-    data =json['data'].cast<String, Map<String, String>>();
-    bestSeller=json['bestSeller']??0;
-    rate=json['rate']??5;
-    brandName=json['brandName'];
-    virtualImage=json['virtualImage'].cast<String,String>();
+    photos = json['photos'];
+    data = json['data'].cast<String, Map<String, String>>();
+    bestSeller = json['bestSeller'] ?? 0;
+    rate = json['rate'] ?? 5;
+    brandName = json['brandName'];
+    virtualImage = json['virtualImage'].cast<String, String>();
   }
 
   Map<String, dynamic> toMap() {

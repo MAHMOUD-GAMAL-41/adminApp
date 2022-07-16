@@ -1,4 +1,3 @@
-import 'package:admin/module/homescreen/cubit/cubit.dart';
 import 'package:admin/module/homescreen/home_screen.dart';
 import 'package:admin/module/login_screen/login_screen.dart';
 import 'package:admin/module/stores_screen/stores_screen.dart';
@@ -51,7 +50,7 @@ class SplashScreenState extends State<SplashScreen> {
           ),
         ),
         nextScreen: uId != null ?uId=='mainAdmin'?StoresScreen(): HomeScreen() : LoginScreen(),
-        duration: 2,
+        duration: 4,
         backgroundColor: Colors.orange,
       ),
     );

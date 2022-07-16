@@ -1,15 +1,10 @@
 import 'dart:io';
-
 import 'package:admin/module/homescreen/cubit/states.dart';
-import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../../shared/Styles/colors.dart';
-import '../../shared/components/component.dart';
 import '../homescreen/cubit/cubit.dart';
 
 class AddVirtualImage extends StatelessWidget {
@@ -18,7 +13,7 @@ class AddVirtualImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<int> colors = AdminCubit.get(context).colors.toList();
+    List<String> colors = AdminCubit.get(context).colors.toList();
     return BlocConsumer<AdminCubit, AdminStates>(
       listener: (context, state) {
         // TODO: implement listener
@@ -28,23 +23,25 @@ class AddVirtualImage extends StatelessWidget {
           appBar: AppBar(
             title: Text('Add Virual Images',style: TextStyle(color: Colors.white),),
           ),
-            body: Column(
-              children: [
-                SizedBox(height: 10,),
-                ListView.separated(
+            body: SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(height: 10,),
+                  ListView.separated(
           separatorBuilder: (context, index) => SizedBox(
-                height: 10,
+                  height: 10,
           ),
           shrinkWrap: true,
           itemCount: colors.length,
           itemBuilder: (BuildContext context, int index) {
-                return colorItems(
-                  context,
-                  colors[index],
-                );
+                  return colorItems(
+                    context,
+                    int.parse(colors[index]),
+                  );
           },
         ),
-              ],
+                ],
+              ),
             ));
       },
     );
@@ -127,13 +124,16 @@ Widget colorItems(context, color) {
                                         onPressed: () {
                                           ImagePicker picker = ImagePicker();
                                           picker
-                                              .pickImage(
-                                                  source: ImageSource.gallery)
+                                              .pickImage
+                                            (
+                                                  source: ImageSource.gallery
+                                            )
                                               .then((value) {
                                             if (value != null) {
                                               AdminCubit.get(context)
                                                   .getVirtualImages(
-                                                      color, value);
+                                                      color, value
+                                              );
                                             } else {
                                               print('No Image Selected.');
                                             }

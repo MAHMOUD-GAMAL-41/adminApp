@@ -65,7 +65,9 @@ class AdminRemoveProductsSuccessState extends AdminStates {}
 class AdminCancelOrderSuccessState extends AdminStates {}
 class AdminApproveOrderSuccessState extends AdminStates {}
 class AddingProductPhotoSuccessState extends AdminStates {}
+class AddingProductWebPhotoSuccessState extends AdminStates {}
 class RemoveProductPhotoSuccessState extends AdminStates {}
+class RemoveProductWebPhotoSuccessState extends AdminStates {}
 class RemoveProductPhotoFBSuccessState extends AdminStates {}
 class RemoveProductPhotoFBErrorState extends AdminStates {
   final String error;

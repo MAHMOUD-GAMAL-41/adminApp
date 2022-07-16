@@ -1,5 +1,6 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/user_order_model.dart';
@@ -71,7 +72,7 @@ class ApprovedOrderDetails extends StatelessWidget {
                 padding: const EdgeInsets.all(10.0),
                 child: Column(
                   children: [
-                    Row(
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -201,10 +202,7 @@ class ApprovedOrderDetails extends StatelessWidget {
                             ),
                           ],
                         ),
-                        Text(
-                          '${order.orders[index].price} LE ',
-                          style: TextStyle(color: Colors.black, fontSize: 18),
-                        ),
+
                         Spacer(),
                         Row(
                           children: [

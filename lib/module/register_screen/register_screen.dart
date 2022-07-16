@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:io';
 
 import 'package:admin/module/login_screen/login_screen.dart';
@@ -6,6 +8,7 @@ import 'package:admin/shared/components/component.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'cubit/cubit.dart';
 import 'cubit/states.dart';
 
@@ -34,11 +37,16 @@ class RegisterScreen extends StatelessWidget {
         listener: (context, state) {
           if (state is AdminRegisterErrorState) {
             showToast(text: state.error.toString(), state: ToastStates.ERROR);
-          } else if (state is AdminSendRequestSuccessState) {
+            EasyLoading.dismiss();
+
+          } else if (state is AdminSendRequestSuccessState)
+          {
+            EasyLoading.dismiss();
             defaultSnackBar(
                 context: context,
                 title: 'wait for Acceptance email',
-                color: Colors.green);
+                color: Colors.green
+            );
             Navigator.pushReplacementNamed(context, LoginScreen.id);
           }
           if (state is SocialUploadProfileImageSuccessState) {
@@ -123,7 +131,8 @@ class RegisterScreen extends StatelessWidget {
                                                         color: Colors.black,
                                                         fontWeight:
                                                             FontWeight.w500,
-                                                        fontSize: 18),
+                                                        fontSize: 18
+                                                    ),
                                                   )
                                                 ],
                                               ),

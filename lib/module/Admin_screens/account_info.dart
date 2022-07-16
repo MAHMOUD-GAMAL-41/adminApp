@@ -1,5 +1,4 @@
 import 'package:admin/shared/Styles/colors.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -31,7 +30,6 @@ class AccountInfoScreen extends StatelessWidget {
         }
       }),
       builder: (context, state) {
-        User? user = FirebaseAuth.instance.currentUser;
         nameController.text = '${AdminCubit.get(context).model!.name}';
 
         return Scaffold(

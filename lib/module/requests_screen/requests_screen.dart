@@ -138,7 +138,8 @@ class RequestsScreen extends StatelessWidget {
                           style: const TextStyle(
                               fontSize: 14,
                               color: Colors.black,
-                              fontWeight: FontWeight.bold),
+                              fontWeight: FontWeight.bold
+                          ),
                         ),
                       ),
                       const SizedBox(

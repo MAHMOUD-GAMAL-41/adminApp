@@ -88,23 +88,29 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(
-                        width: 20,
+                        width: 10,
                       ),
                       Column(
                         children: [
                           const SizedBox(
                             height: 20,
                           ),
-                          Text(
-                            AdminCubit.get(context)
-                                .model!
-                                .name
-                                .toString()
-                                .toUpperCase(),
-                            style: TextStyle(
-                                color: MyColors.lightOrange,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
+                          SizedBox(
+                            width: 90,
+                            child: Text(
+                              AdminCubit.get(context)
+                                  .model!
+                                  .name
+                                  .toString()
+                                  .toUpperCase(),
+                              style: TextStyle(
+
+                                  color: MyColors.lightOrange,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold
+                              ),
+                              overflow: TextOverflow.ellipsis,maxLines: 1,
+                            ),
                           ),
                           SizedBox(
                             height: 10,
@@ -215,14 +221,15 @@ class HomeScreen extends StatelessWidget {
 
               borderColor:  MyColors.purpleLight,
               header: Container(
+
                 decoration: BoxDecoration(color: Colors.white),
                 height: 100,
-                width: double.infinity,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Container(
+
                       margin: const EdgeInsets.all(10),
                       height: double.infinity,
                       decoration: const BoxDecoration(
@@ -259,42 +266,49 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      width: 20,
+                      width: 10,
                     ),
-                    Column(
-                      children: [
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          AdminCubit.get(context)
-                              .model!
-                              .name
-                              .toString()
-                              .toUpperCase(),
-                          style: TextStyle(
-                              color: MyColors.lightOrange,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        SizedBox(
-                          width: 70,
-                          child: Text(
+                    Container(
+                      width: 135    ,
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+
                             AdminCubit.get(context)
                                 .model!
-                                .brandName
-                                .toString(),
+                                .name
+                                .toString()
+                                .toUpperCase(),
                             style: TextStyle(
-                              color: MyColors.purpleLight,
-                              fontSize: 15,
-                            ),
+
+                                color: MyColors.lightOrange,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                            maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                      ],
+                          SizedBox(
+                            height: 10,
+                          ),
+                          SizedBox(
+                            width: 70,
+                            child: Text(
+                              AdminCubit.get(context)
+                                  .model!
+                                  .brandName
+                                  .toString(),
+                              style: TextStyle(
+                                color: MyColors.purpleLight,
+                                fontSize: 15,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
                     )
                   ],
                 ),

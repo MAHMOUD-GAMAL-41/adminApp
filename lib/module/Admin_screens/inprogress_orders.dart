@@ -1,7 +1,6 @@
 import 'package:admin/module/homescreen/cubit/cubit.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import '../../models/user_order_model.dart';
@@ -14,9 +13,7 @@ class InprogressOrdersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var cubit = AdminCubit.get(context);
-    return Column(
-      children: [
-        StreamBuilder<List<UserOrderModel>>(
+    return StreamBuilder<List<UserOrderModel>>(
           stream: cubit.loadOrdersInProgress(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
@@ -43,7 +40,8 @@ class InprogressOrdersScreen extends StatelessWidget {
                   ),
                 ),
               );
-            } else if (snapshot.connectionState == ConnectionState.waiting) {
+            }
+            else if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.all(18.0),
@@ -65,9 +63,11 @@ class InprogressOrdersScreen extends StatelessWidget {
                   ),
                 ),
               );
-            } else if (snapshot.hasData) {
+            }
+            else if (snapshot.hasData) {
               final ordersInProgress = snapshot.data!;
-              return ListView.separated(
+              print('has Data');
+              return ordersInProgress.isNotEmpty?ListView.separated(
                 physics: BouncingScrollPhysics(),
                 shrinkWrap: true,
                 separatorBuilder: (context, index) => Divider(
@@ -78,13 +78,36 @@ class InprogressOrdersScreen extends StatelessWidget {
                   delay: Duration(seconds: 1),
                   child: InprogressOrder(ordersInProgress[index], context),
                 ),
+              ):
+
+              Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 300.0,),
+                  child: Column(
+                   mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.remove_shopping_cart_outlined,size: 250,color: MyColors.orange,),
+                      SizedBox(height: 5,),
+                      Text(
+                        'No Inprogress Orders',
+                        style: TextStyle(color: Colors.black54, fontSize: 30),
+                      ),
+                    ],
+                  ),
+                ),
               );
             }
-            return SizedBox();
-          },
-        ),
-      ],
-    );
+
+              return Center(
+                  child: Text(
+                'No Inprogress Order',
+                style: TextStyle(color: Colors.black, fontSize: 30),
+              ));
+            }
+
+        );
   }
 }
 

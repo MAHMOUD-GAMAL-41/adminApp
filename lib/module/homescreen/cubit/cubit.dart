@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:admin/models/admin_model.dart';
 import 'package:admin/models/user_order_model.dart';
 import 'package:admin/module/Admin_screens/dashboard_screen.dart';
@@ -25,7 +26,6 @@ import '../../../models/products_model.dart';
 import '../../../models/request_model.dart';
 import '../../../shared/Styles/colors.dart';
 import 'dart:core';
-
 import '../../Admin_screens/inprogress_orders.dart';
 import '../home_screen.dart';
 
@@ -33,7 +33,6 @@ class AdminCubit extends Cubit<AdminStates> {
   AdminCubit() : super(AdminInitialState());
 
   static AdminCubit get(context) => BlocProvider.of(context);
-
   adminModel? model;
   List<String> categoriesNameList = [
     'Shirts',
@@ -42,6 +41,7 @@ class AdminCubit extends Cubit<AdminStates> {
     'Shorts',
     'Jackets',
   ];
+
   void configLoading() {
     EasyLoading.instance
       ..displayDuration = const Duration(milliseconds: 2000)
@@ -58,7 +58,9 @@ class AdminCubit extends Cubit<AdminStates> {
       ..dismissOnTap = false;
     // ..customAnimation = CustomAnimation(tween: null,);
   }
+
   Timer? _timer;
+
   void Loading() {
     EasyLoading.addStatusCallback((status) {
       print('EasyLoading Status $status');
@@ -68,11 +70,13 @@ class AdminCubit extends Cubit<AdminStates> {
     });
     // EasyLoading.showSuccess('Use in initState');
   }
+
   List<XFile> photos = [];
+  List<Uint8List> webPhotos = [];
   Map<String, Map<String, dynamic>> data = {};
 
-  Future getAdminData() async{
-    model=null;
+  Future getAdminData() async {
+    model = null;
     emit(AdminGetAdminLoadingState());
     await FirebaseFirestore.instance
         .collection('admins')
@@ -88,26 +92,26 @@ class AdminCubit extends Cubit<AdminStates> {
   }
 
   signOut(context) {
-
     FirebaseAuth.instance.signOut().then((value) {
       CacheHelper.removeDate(key: 'uID').then((value) {
         if (value) {
           emit(UserLoggedOutSuccessState());
           Navigator.pushReplacementNamed(context, LoginScreen.id);
           print(uId);
-          model=null;
+          model = null;
         }
       });
     });
   }
-  mainAdminSignOut(context){
+
+  mainAdminSignOut(context) {
     CacheHelper.removeDate(key: 'uID').then((value) {
       if (value) {
         CacheHelper.removeDate(key: 'IsAdmin').then((value) {
           emit(UserLoggedOutSuccessState());
           Navigator.pushReplacementNamed(context, LoginScreen.id);
           print(uId);
-          model=null;
+          model = null;
         });
       }
     });
@@ -160,12 +164,12 @@ class AdminCubit extends Cubit<AdminStates> {
         if (snapshot.hasError) {
           print('Helllllllllllllllllllp');
           print(snapshot.data.toString());
-          print('zzzzzzzzzz'+snapshot.error.toString());
+          print('zzzzzzzzzz' + snapshot.error.toString());
 
           return Padding(
             padding: const EdgeInsets.all(18.0),
             child: Container(
-              height: 120,
+              height: 150,
               width: 150,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
@@ -188,7 +192,7 @@ class AdminCubit extends Cubit<AdminStates> {
           return Padding(
             padding: const EdgeInsets.all(18.0),
             child: Container(
-              height: 120,
+              height: 150,
               width: 150,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
@@ -217,7 +221,7 @@ class AdminCubit extends Cubit<AdminStates> {
 // Manage Products
   final _firestore = FirebaseFirestore.instance;
 
-  addProduct(
+  Future addProduct(
       {productName,
       description,
       category,
@@ -225,7 +229,8 @@ class AdminCubit extends Cubit<AdminStates> {
       price,
       offer,
       photos,
-      required Map<String, Map<String, dynamic>> data}) {
+      virtual,
+      required Map<String, Map<String, dynamic>> data}) async {
     emit(AdminAddProductsLoadingState());
     EasyLoading.show(status: 'Loading...');
 
@@ -237,8 +242,7 @@ class AdminCubit extends Cubit<AdminStates> {
         offer: offer,
         photos: photos,
         data: data,
-        virtualImage: virphotos
-    );
+        virtualImage: virtual);
     _firestore
         .collection('admins')
         .doc(uId)
@@ -253,7 +257,7 @@ class AdminCubit extends Cubit<AdminStates> {
     });
   }
 
-  editProduct(
+  Future editProduct(
       {productUid,
       productName,
       description,
@@ -263,17 +267,19 @@ class AdminCubit extends Cubit<AdminStates> {
       offer,
       photos,
       context,
-      required Map<String, Map<String, dynamic>> data}) {
+      virtual,
+      required Map<String, Map<String, dynamic>> data}) async {
     emit(AdminEditProductsLoadingState());
+    EasyLoading.show(status: 'Loading...');
     ProductModel product = ProductModel(
-      productName: productName,
-      description: description,
-      category: category,
-      price: price,
-      offer: offer,
-      photos: photos,
-      data: data,
-      virtualImage: virphotos
+        productName: productName,
+        description: description,
+        category: category,
+        price: price,
+        offer: offer,
+        photos: photos,
+        data: data,
+        virtualImage: virtual
     );
     _firestore
         .collection('admins')
@@ -284,19 +290,8 @@ class AdminCubit extends Cubit<AdminStates> {
         .then((value) {
       removePhotoFBStorage();
       EasyLoading.showSuccess('Uploading product Success!');
-
       emit(AdminEditProductsSuccessState());
-
       Navigator.pushNamed(context, HomeScreen.id);
-      data.clear();
-      this.photos.clear();
-      PhotosURL.clear();
-      removeUrl.clear();
-      SelecetedCategory = null;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Product Editing Successful'),
-        backgroundColor: Colors.green,
-      ));
     }).catchError((error) {
       emit(AdminEditProductsErrorState(error.toString()));
       print('There is Error here : ${error.toString()}');
@@ -435,14 +430,29 @@ class AdminCubit extends Cubit<AdminStates> {
     emit(AdminRemoveProductsSuccessState());
   }
 
+  deleteAdmin(docID) {
+    _firestore.collection('admins').doc(uId).delete();
+    emit(AdminRemoveProductsSuccessState());
+  }
+
   addPhotosToList(photo) {
     this.photos.addAll(photo);
     emit(AddingProductPhotoSuccessState());
   }
 
+  addWebPhotosToList(photo) {
+    this.webPhotos.addAll(photo);
+    emit(AddingProductWebPhotoSuccessState());
+  }
+
   removePhotoFromList(index) {
     photos.removeAt(index);
     emit(RemoveProductPhotoSuccessState());
+  }
+
+  removeWebPhotoFromList(index) {
+    webPhotos.removeAt(index);
+    emit(RemoveProductWebPhotoSuccessState());
   }
 
   List<String> removeUrl = [];
@@ -464,8 +474,7 @@ class AdminCubit extends Cubit<AdminStates> {
   }
 
   String? SelecetedCategory;
-
-  Set<int> colors={};
+  Set<String> colors = {};
 
   selectedCategory(category) {
     SelecetedCategory = category as String;
@@ -499,10 +508,9 @@ class AdminCubit extends Cubit<AdminStates> {
 
   List<String> PhotosURL = [];
 
-  Future uploadProductPhoto(context) async {
+  Future uploadProductPhoto() async {
     emit(UploadPhotostofirebaseLoadingState());
     EasyLoading.show(status: 'Loading...');
-
     for (var img in photos) {
       File file = File(img.path);
       String? downloadURL;
@@ -517,17 +525,15 @@ class AdminCubit extends Cubit<AdminStates> {
             .getDownloadURL();
         if (downloadURL != null) {
           PhotosURL.add(downloadURL);
-          print(AdminCubit.get(context).PhotosURL);
+          print(PhotosURL);
 
           emit(UploadPhotostofirebaseSuccessState());
         }
       } on FirebaseException catch (e) {
         emit(UploadPhotostofirebaseErrorState());
         EasyLoading.showError('Failed with Error');
-
       }
     }
-
   }
 
   Future<bool> validatePassword({required String currentPassword}) async {
@@ -623,11 +629,9 @@ class AdminCubit extends Cubit<AdminStates> {
       }
     }
   }
-  
-  Stream<List<adminModel>> getStores(){
-    return _firestore.collection('admins')
-      .snapshots()
-      .map((snapshot) {
+
+  Stream<List<adminModel>> getStores() {
+    return _firestore.collection('admins').snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         emit(AdminGetStoresSuccessState());
         print(doc.data());
@@ -635,6 +639,7 @@ class AdminCubit extends Cubit<AdminStates> {
       }).toList();
     });
   }
+
   void getData(String adminUId) {
     emit(AdminGetAdminLoadingState());
     FirebaseFirestore.instance
@@ -649,10 +654,9 @@ class AdminCubit extends Cubit<AdminStates> {
       emit(AdminGetAdminErrorState(error.toString()));
     });
   }
-  Stream<List<RequestModel>> getRequests(){
-    return _firestore.collection('requests')
-        .snapshots()
-        .map((snapshot) {
+
+  Stream<List<RequestModel>> getRequests() {
+    return _firestore.collection('requests').snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         emit(AdminGetRequestsSuccessState());
         print(doc.data());
@@ -661,15 +665,12 @@ class AdminCubit extends Cubit<AdminStates> {
     });
   }
 
-  Stream<RequestModel> checkRequest(String? uid){
-    return _firestore
-        .collection('requests')
-        .doc(uid)
-        .snapshots()
-        .map((event) {
-         return  RequestModel.fromJson(event.data()!);
+  Stream<RequestModel> checkRequest(String? uid) {
+    return _firestore.collection('requests').doc(uid).snapshots().map((event) {
+      return RequestModel.fromJson(event.data()!);
     });
   }
+
   Future adminRegister({
     required String? name,
     required String? phone,
@@ -679,7 +680,7 @@ class AdminCubit extends Cubit<AdminStates> {
     required String? brandPhone,
     required String? image,
     required String? uid,
-  }) async{
+  }) async {
     emit(AdminRegisterLoadState());
     FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email!, password: password!)
@@ -701,16 +702,15 @@ class AdminCubit extends Cubit<AdminStates> {
     });
   }
 
-  void adminCreate({
-    required String? name,
-    required String? phone,
-    required String? email,
-    required String? brandName,
-    required String? brandPhone,
-    required String? uId,
-    required String? uid,
-    required String? image
-  }) {
+  void adminCreate(
+      {required String? name,
+      required String? phone,
+      required String? email,
+      required String? brandName,
+      required String? brandPhone,
+      required String? uId,
+      required String? uid,
+      required String? image}) {
     adminModel model = adminModel(
         name: name,
         phone: phone,
@@ -727,9 +727,10 @@ class AdminCubit extends Cubit<AdminStates> {
       FirebaseFirestore.instance
           .collection('requests')
           .doc(uid)
-          .delete().then((value) {
+          .delete()
+          .then((value) {
         emit(AdminCreateSuccessState(uId!));
-      }).catchError((error){
+      }).catchError((error) {
         print(error.toString());
         emit(AdminCreateErrorState(error.toString()));
       });
@@ -738,9 +739,11 @@ class AdminCubit extends Cubit<AdminStates> {
       emit(AdminCreateErrorState(error.toString()));
     });
   }
+
   Future<void> send(String email) async {
     final Email _email = Email(
-      body: 'we pleased to inform you that\'s your account has been approved \n Login Now and Go On',
+      body:
+          'we pleased to inform you that\'s your account has been approved \n Login Now and Go On',
       subject: 'Shoppy Request Approval',
       recipients: [email],
       isHTML: false,
@@ -754,95 +757,88 @@ class AdminCubit extends Cubit<AdminStates> {
       emit(AdminSendEmailErrorState(error.toString()));
     }
   }
+
   Future acceptRequest({
     required RequestModel? request,
-  }) async{
+  }) async {
     adminRegister(
-        name: request!.name,
-        phone: request.phone,
-        email: request.email,
-        password: request.password,
-        brandName: request.brandName,
-        brandPhone: request.brandPhone,
-        uid:request.uId,
-        image: request.image).then((value) {
-          send(request.email!);
+            name: request!.name,
+            phone: request.phone,
+            email: request.email,
+            password: request.password,
+            brandName: request.brandName,
+            brandPhone: request.brandPhone,
+            uid: request.uId,
+            image: request.image)
+        .then((value) {
+      send(request.email!);
     });
   }
 
   Future refuseRequest({
     required RequestModel? request,
-  })async{
+  }) async {
     FirebaseFirestore.instance
         .collection('requests')
         .doc(request!.uId)
-        .delete().then((value) {
+        .delete()
+        .then((value) {
       emit(AdminRefuseRequestSuccessState());
-    }).catchError((error){
+    }).catchError((error) {
       print(error.toString());
       emit(AdminRefuseRequestErrorState(error.toString()));
     });
   }
-List<File> virtualImages=[];
-  bool switchVirtualImage=false;
-  void switchboolval(bool val){
-    switchVirtualImage=val;
+
+  bool switchVirtualImage = false;
+
+  void switchboolval(bool val) {
+    switchVirtualImage = val;
     print(switchVirtualImage);
     emit(SwitchVirtualImageSuccessState());
-
   }
 
+  Map<int, XFile> virtualPhoto = {};
 
-  Map<int,XFile> virtualPhoto={};
-  bool uploading = false;
-
-  void getVirtualImages(color,image)  {
-    virtualPhoto[color]=image ;
+  void getVirtualImages(color, image) {
+    virtualPhoto[color] = image as XFile;
 
     print(virtualPhoto);
     emit(AddingVirtualImageToMapSuccessState());
   }
-void removeVirtualPhoto(color){
-  virtualPhoto
-      .remove(color);
-  emit(RemovingVirtualImageToMapSuccessState());
 
-}
-Map<String,String> virphotos ={};
+  void removeVirtualPhoto(color) {
+    virtualPhoto.remove(color);
+    emit(RemovingVirtualImageToMapSuccessState());
+  }
 
-  Future uploadVirtualPhotoStorage () async {
+  Map<String, String> virphotos = {};
+
+  Future uploadVirtualPhotoStorage() async {
     emit(UploadVirtualPhotostofirebaseLoadingState());
     EasyLoading.show(status: 'Loading...');
-virtualPhoto.forEach((key, value) async {
-  File file = File(value.path);
-  String? downloadURL;
-  try {
-    await FirebaseStorage.instance
-        .ref(
-        'admins/products/virtualImage/${Uri.file(value.path).pathSegments.last}')
-        .putFile(file);
-    downloadURL = await FirebaseStorage.instance
-        .ref(
-        'admins/products/virtualImage/${Uri.file(value.path).pathSegments.last}')
-        .getDownloadURL();
-    if (downloadURL != null) {
-      virphotos[key.toString()]=downloadURL;
-      print(virphotos);
+    virtualPhoto.forEach((key, value) async {
+      File file = File(value.path);
+      String? downloadURL;
+      try {
+        await FirebaseStorage.instance
+            .ref(
+                'admins/products/virtualImage/${Uri.file(value.path).pathSegments.last}')
+            .putFile(file);
+        downloadURL = await FirebaseStorage.instance
+            .ref(
+                'admins/products/virtualImage/${Uri.file(value.path).pathSegments.last}')
+            .getDownloadURL();
+        if (downloadURL != null) {
+          virphotos[key.toString()] = downloadURL;
+          print(virphotos);
 
-      emit(UploadVirtualPhotostofirebaseSuccessState());
-    }
-  } on FirebaseException catch (e) {
-    emit(UploadVirtualPhotostofirebaseErrorState());
-    EasyLoading.showError('Failed with Error');
-
+          emit(UploadVirtualPhotostofirebaseSuccessState());
+        }
+      } on FirebaseException catch (e) {
+        emit(UploadVirtualPhotostofirebaseErrorState());
+        EasyLoading.showError('Failed with Error');
+      }
+    });
   }
-});
-
-
-  }
-  // bool uploadingVirtualImage(color){
-  //   emit(AddingVirtualImageToMapCheckSuccessState());
-  //
-  //   return virtualPhoto[color]!=null;
-  // }
 }

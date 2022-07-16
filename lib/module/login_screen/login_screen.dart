@@ -1,4 +1,6 @@
 
+// ignore_for_file: must_be_immutable
+
 import 'package:admin/module/homescreen/cubit/cubit.dart';
 import 'package:admin/module/homescreen/home_screen.dart';
 import 'package:admin/module/register_screen/register_screen.dart';
@@ -10,6 +12,7 @@ import 'package:admin/shared/network/local/cache_helper.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'cubit/login_cubit.dart';
 import 'cubit/login_states.dart';
 import 'forget_password_screen.dart';
@@ -31,8 +34,11 @@ class LoginScreen extends StatelessWidget {
           listener: (context, state) {
             if (state is AdminLoginErrorState) {
               showToast(text: 'you don\'t have an account or your account isn\'t reviewed yet', state: ToastStates.ERROR);
+              EasyLoading.dismiss();
+
             }
             if (state is AdminLoginSuccessState) {
+              EasyLoading.dismiss();
               CacheHelper.saveData(key:'uID', value: state.uID).then((value) async{
                 uId=await CacheHelper.getData(key: 'uID');
                 AdminCubit.get(context).getAdminData().then((value) {
@@ -43,6 +49,7 @@ class LoginScreen extends StatelessWidget {
               });
             }
             if (state is MainAdminLoginSuccessState) {
+              EasyLoading.dismiss();
               CacheHelper.saveData(key:'uID', value: 'mainAdmin').then((value) {
                 uId=CacheHelper.getData(key: 'uID');
                 print(uId);

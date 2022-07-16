@@ -1,6 +1,5 @@
 import 'package:admin/module/Admin_screens/reset_password.dart';
 import 'package:admin/shared/Styles/colors.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,7 +13,6 @@ class ProfileScreen extends StatelessWidget {
     return BlocConsumer<AdminCubit,AdminStates>(
       listener: (context,state){},
       builder: (context,state){
-        User? user = FirebaseAuth.instance.currentUser;
         return Scaffold(
             appBar: AppBar(
               backgroundColor: MyColors.orange,

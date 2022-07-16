@@ -43,8 +43,7 @@ class ApprovedOrdersScreen extends StatelessWidget {
                   ),
                 ),
               );
-            }
-            else if (snapshot.connectionState == ConnectionState.waiting) {
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
               return Padding(
                 padding: const EdgeInsets.all(18.0),
                 child: Container(
@@ -64,23 +63,56 @@ class ApprovedOrdersScreen extends StatelessWidget {
                   ),
                 ),
               );
-            }
-            else if (snapshot.hasData) {
+            } else if (snapshot.hasData) {
               final ordersApprove = snapshot.data!;
-              return ListView.separated(
-                physics: BouncingScrollPhysics(),
-                shrinkWrap: true,
-                separatorBuilder: (context, index) => Divider(
-                  height: 1,
-                ),
-                itemCount: ordersApprove.length,
-                itemBuilder: (context, index) => FadeInLeft(
-                  delay: Duration(seconds: 1),
-                  child: ApproveOrder(ordersApprove[index], context),
-                ),
-              );
+              return ordersApprove.isNotEmpty
+                  ? ListView.separated(
+                      physics: BouncingScrollPhysics(),
+                      shrinkWrap: true,
+                      separatorBuilder: (context, index) => Divider(
+                        height: 1,
+                      ),
+                      itemCount: ordersApprove.length,
+                      itemBuilder: (context, index) => FadeInLeft(
+                        delay: Duration(seconds: 1),
+                        child: ApproveOrder(ordersApprove[index], context),
+                      ),
+                    )
+                  : Container(
+                      height: MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: 300.0,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.remove_shopping_cart_outlined,
+                              size: 250,
+                              color: MyColors.orange,
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              'No Approved Orders',
+                              style: TextStyle(
+                                  color: Colors.black54, fontSize: 30),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+              ;
             }
-            return SizedBox();
+
+            return Center(
+              child: Text(
+                'There is no orders',
+              ),
+            );
           },
         ),
       ],
@@ -93,7 +125,12 @@ Widget ApproveOrder(UserOrderModel order, context) {
     padding: const EdgeInsets.only(left: 10.0, right: 10, top: 10),
     child: InkWell(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>ApprovedOrderDetails(order: order,)));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ApprovedOrderDetails(
+                      order: order,
+                    )));
       },
       child: Card(
         margin: EdgeInsets.zero,
@@ -123,7 +160,7 @@ Widget ApproveOrder(UserOrderModel order, context) {
               SizedBox(
                 height: 15,
               ),
-              Row(
+              Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -206,7 +243,7 @@ Widget ApproveOrder(UserOrderModel order, context) {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
-                    'Total :     ${order.orderPrice}   LE ',
+                    'Total :     ${order.orderPrice}   LE',
                     style: TextStyle(
                         fontSize: 16,
                         color: Colors.black,

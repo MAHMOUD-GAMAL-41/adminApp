@@ -1,8 +1,10 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:io';
 import 'package:admin/models/request_model.dart';
 import 'package:admin/module/register_screen/cubit/states.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -106,6 +108,8 @@ class AdminRegisterCubit extends Cubit<AdminRegisterStates> {
       String? brandName,
       String? brandPhone,) async {
     emit(SocialUploadProfileImageLoadingState());
+    EasyLoading.show(status: 'Loading...');
+
     await firebase_storage.FirebaseStorage.instance
         .ref()
         .child('admins/${Uri

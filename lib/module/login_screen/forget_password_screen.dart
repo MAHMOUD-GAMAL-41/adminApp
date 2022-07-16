@@ -18,13 +18,11 @@ class ForgetPasswordScreen extends StatelessWidget {
           listener: (context,state){},
           builder:(context,state){
             return SafeArea(child: Scaffold(
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               appBar: AppBar(
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                 title: Text(
                   'Forget Password',
                   style: TextStyle(
-                    color: Theme.of(context).focusColor,
+                    color: Colors.black,
                   ),
                 ),
                 centerTitle: true,
@@ -32,7 +30,6 @@ class ForgetPasswordScreen extends StatelessWidget {
                 leading: IconButton(
                   icon: Icon(
                     Icons.arrow_back,
-                    color:Theme.of(context).canvasColor,
                   ),
                   onPressed: (){
                     Navigator.pop(context);
@@ -94,16 +91,12 @@ class ForgetPasswordScreen extends StatelessWidget {
                         SizedBox(
                           height: 50,
                         ),
-                        defaultButton(
-                          text: 'SEND',
-                          onPressFunction: (){
-                            if(formKey.currentState!.validate()){
-                              String email=emailController.text.toString().trim();
-                              AdminLoginCubit.get(context).resetPassword( email: email);
-                            }
-                          },
-                          context: context,
-                        )
+                        BuildButton('SEND', (){
+                          if(formKey.currentState!.validate()){
+                            String email=emailController.text.toString().trim();
+                            AdminLoginCubit.get(context).resetPassword(email: email);
+                          }
+                        }, context)
                       ],
                     ),
                   ),

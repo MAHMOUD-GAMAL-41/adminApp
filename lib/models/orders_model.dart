@@ -3,7 +3,6 @@ class OrderModel{
   late String description;
   late String productUid;
   late int quantity;
-  late double price;
   late String photo;
   late String size;
   late String color;
@@ -14,7 +13,6 @@ class OrderModel{
     required this.description,
     required this.productUid,
     required this.quantity,
-    required this.price,
     required this.photo,
     required this.size,
     required this.color,
@@ -30,7 +28,6 @@ class OrderModel{
     description=json['description'];
     productUid=json['productUid'];
     quantity=json['quantity'];
-    price=json['price'];
     photo=json['photo'];
     size=json['size'];
     color=json['color'];
@@ -43,7 +40,6 @@ class OrderModel{
         'description':description,
         'productUid':productUid,
         'quantity':quantity,
-        'price':price,
         'photo':photo,
         'size':size,
         'color':color,

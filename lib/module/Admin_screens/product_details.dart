@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:admin/module/homescreen/cubit/cubit.dart';
 import 'package:admin/shared/Styles/colors.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -57,6 +59,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             onPressed: () {
                               AdminCubit.get(context).deleteProduct(
                                   widget.productModel.productUid);
+                              Navigator.pop(context);
                             },
                             child: Text(
                               'Remove',

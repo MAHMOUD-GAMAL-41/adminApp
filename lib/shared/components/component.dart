@@ -1,8 +1,6 @@
-import 'package:admin/models/products_model.dart';
-import 'package:admin/module/homescreen/cubit/cubit.dart';
+
 import 'package:admin/shared/Styles/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 Widget BuildTextForm({
@@ -309,7 +307,7 @@ Widget analyticWedget({required String title, required String value}) {
   return Padding(
     padding: const EdgeInsets.all(18.0),
     child: Container(
-      height: 120,
+      height: 130,
       width: 150,
       decoration: BoxDecoration(
           border: Border.all(color: MyColors.deepOrange),
@@ -356,8 +354,7 @@ Widget AddProductInputField(
     controller,
     widget,
     line,
-    type,
-    validator,
+    type, validator ,
     subfunc,
     onChanged}) {
   return Container(
@@ -379,6 +376,7 @@ Widget AddProductInputField(
             children: [
               Expanded(
                 child: TextFormField(
+
                   onFieldSubmitted: subfunc,
                   onChanged: onChanged,
                   validator: validator,
@@ -386,7 +384,9 @@ Widget AddProductInputField(
                   maxLines: line,
                   autofocus: false,
                   controller: controller,
+
                   decoration: InputDecoration(
+
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
@@ -405,9 +405,9 @@ Widget AddProductInputField(
   );
 }
 
-buildProductItemView(ProductModel item, context) {
-  var cubit = AdminCubit.get(context);
-  return Card(
-    child: Column(),
-  );
-}
+// buildProductItemView(ProductModel item, context) {
+//   var cubit = AdminCubit.get(context);
+//   return Card(
+//     child: Column(),
+//   );
+// }

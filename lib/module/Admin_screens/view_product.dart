@@ -1,9 +1,7 @@
 import 'package:admin/models/products_model.dart';
 import 'package:admin/module/Admin_screens/product_details.dart';
 import 'package:admin/module/homescreen/cubit/cubit.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
 import '../../shared/Styles/colors.dart';
@@ -70,7 +68,7 @@ class ViewProductScreen extends StatelessWidget {
         }
         else if (snapshot.hasData) {
           final products = snapshot.data!;
-          return GridView.count(
+          return products.isNotEmpty? GridView.count(
             physics: NeverScrollableScrollPhysics(),
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
@@ -84,7 +82,26 @@ class ViewProductScreen extends StatelessWidget {
                   cubit: AdminCubit.get(context)),
             ),
             crossAxisCount: (MediaQuery.of(context).size.width / 180).floor(),
-          );
+          ):
+
+          Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 300.0,),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.production_quantity_limits_outlined,size: 250,color: MyColors.orange,),
+                  SizedBox(height: 5,),
+                  Text(
+                    'There\'s no product',
+                    style: TextStyle(color: Colors.black54, fontSize: 30),
+                  ),
+                ],
+              ),
+            ),
+          );;
         }
         return SizedBox();
       },

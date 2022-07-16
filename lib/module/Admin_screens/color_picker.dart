@@ -1,5 +1,4 @@
 import 'package:admin/module/homescreen/cubit/cubit.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_circle_color_picker/flutter_circle_color_picker.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 
@@ -51,7 +50,7 @@ class _ColorPickerState extends State<ColorPicker> {
                   child: NeumorphicButton(
                     onPressed: () {
                       AdminCubit.get(context).addColortoMap(widget.Key, colorController.color.value, '');
-                      AdminCubit.get(context).colors.add(colorController.color.value);
+                      AdminCubit.get(context).colors.add(colorController.color.value.toString());
                       print( AdminCubit.get(context).data[widget.Key].toString());
                       Navigator.pop(context);
                     },

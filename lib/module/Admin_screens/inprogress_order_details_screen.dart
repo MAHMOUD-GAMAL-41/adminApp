@@ -1,6 +1,7 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:admin/module/homescreen/cubit/cubit.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/user_order_model.dart';
@@ -122,7 +123,7 @@ class InProgressOrderDetails extends StatelessWidget {
                 padding: const EdgeInsets.all(10.0),
                 child: Column(
                   children: [
-                    Row(
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -133,41 +134,43 @@ class InProgressOrderDetails extends StatelessWidget {
                               color: Colors.black,
                               fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(width: 40),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: 25,
-                            ),
-                            Text(
-                              '${order.addressModel.cityName}, ${order.addressModel.streetName},',
-                              maxLines: 3,
-                              overflow: TextOverflow.clip,
-                              style: TextStyle(
-                                fontSize: 18,
+                        // SizedBox(width: 40),
+                        Container(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 25,
                               ),
-                            ),
-                            Text(
-                              'Building : ${order.addressModel.buildingNumber},',
-                              style: TextStyle(
-                                fontSize: 18,
+                              Text(
+                                '${order.addressModel.cityName}, ${order.addressModel.streetName},',
+                                maxLines: 3,
+                                overflow: TextOverflow.clip,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                ),
                               ),
-                            ),
-                            Text(
-                              'Floor : ${order.addressModel.floorNumber},',
-                              style: TextStyle(
-                                fontSize: 18,
+                              Text(
+                                'Building : ${order.addressModel.buildingNumber},',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                ),
                               ),
-                            ),
-                            Text(
-                              'Apartment : ${order.addressModel.apartmentNumber}',
-                              style: TextStyle(
-                                fontSize: 18,
+                              Text(
+                                'Floor : ${order.addressModel.floorNumber},',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                ),
                               ),
-                            ),
-                          ],
+                              Text(
+                                'Apartment : ${order.addressModel.apartmentNumber}',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                         SizedBox(
                           height: 10,
@@ -252,10 +255,7 @@ class InProgressOrderDetails extends StatelessWidget {
                             ),
                           ],
                         ),
-                        Text(
-                          '${order.orders[index].price} LE ',
-                          style: TextStyle(color: Colors.black, fontSize: 18),
-                        ),
+
                         Spacer(),
                         Row(
                           children: [
