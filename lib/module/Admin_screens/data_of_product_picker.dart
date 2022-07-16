@@ -360,6 +360,7 @@ class _DataPickerState extends State<DataPicker> {
                         .values
                         .toList()[index2]
                         .toString();
+                    print('ggg'+index2.toString()+'  q:'+quantityController[index2].text);
                     return Container(
                       child: Row(
                         children: [
@@ -397,6 +398,7 @@ class _DataPickerState extends State<DataPicker> {
                             flex: 2,
                             child: AddProductInputField(
                                 validator: (value) {
+
                                   if (value.toString().isNotEmpty) {
                                     var q = double.parse(value);
                                     print(q.toString());
@@ -412,7 +414,8 @@ class _DataPickerState extends State<DataPicker> {
                                 line: 1,
                                 controller: quantityController[index2],
                                 subfunc: (value) {
-                                  if (key.currentState!.validate()) {
+                                  print('the length ${quantityController}');
+
                                     AdminCubit.get(context).addColortoMap(
                                         AdminCubit.get(context)
                                             .data
@@ -425,12 +428,16 @@ class _DataPickerState extends State<DataPicker> {
                                                 .toList()[index]]!
                                             .keys
                                             .toList()[index2]),
-                                        value.toString());
+                                        quantityController[index2].text.toString());
                                     print(AdminCubit.get(context).data);
-                                  }
+
                                 },
                                 onChanged: (value) {
-                                  if (key.currentState!.validate()) {
+                                  quantityController.forEach((element) {
+                                    print('e '+element.text);
+                                  });
+                                  print('gg'+quantityController[index2].text);
+
                                     AdminCubit.get(context).addColortoMap(
                                         AdminCubit.get(context)
                                             .data
@@ -443,10 +450,11 @@ class _DataPickerState extends State<DataPicker> {
                                                 .toList()[index]]!
                                             .keys
                                             .toList()[index2]),
-                                        value.toString());
+                                        quantityController[index2].text.toString());
                                     print(AdminCubit.get(context).data);
-                                  }
-                                }),
+                                }
+
+                                ),
                           ),
                           Padding(
                               padding: EdgeInsets.only(top: 30, left: 15),
@@ -467,7 +475,6 @@ class _DataPickerState extends State<DataPicker> {
                                                   .toList()[index]]!
                                               .keys
                                               .toList()[index2]);
-
                                     });
                                   },
                                   icon: Icon(

@@ -221,6 +221,15 @@ class AdminCubit extends Cubit<AdminStates> {
 // Manage Products
   final _firestore = FirebaseFirestore.instance;
 
+  Future clearData()async{
+    data.clear();
+    photos.clear();
+    PhotosURL.clear();
+    virphotos.clear();
+    virtualPhoto.clear();
+    colors.clear();
+    SelecetedCategory = null;
+  }
   Future addProduct(
       {productName,
       description,
@@ -232,33 +241,48 @@ class AdminCubit extends Cubit<AdminStates> {
       virtual,
       required Map<String, Map<String, dynamic>> data}) async {
     emit(AdminAddProductsLoadingState());
-    EasyLoading.show(status: 'Loading...');
+    if (productName != '') {
+      EasyLoading.show(status: 'Loading...');
 
-    ProductModel product = ProductModel(
-        productName: productName,
-        description: description,
-        category: category,
-        price: price,
-        offer: offer,
-        photos: photos,
-        data: data,
-        virtualImage: virtual);
-    _firestore
-        .collection('admins')
-        .doc(uId)
-        .collection('products')
-        .add(product.toMap())
-        .then((value) {
-      emit(AdminAddProductsSuccessState());
-    }).catchError((error) {
-      emit(AdminAddProductsErrorState(error.toString()));
-      print('There is Error here : ${error.toString()}');
-      print('There is product map here : ${product.toMap().toString()}');
-    });
+      ProductModel product = ProductModel(
+          productName: productName,
+          description: description,
+          category: category,
+          price: price,
+          offer: offer,
+          photos: photos,
+          data: data,
+          virtualImage: virtual);
+      _firestore
+          .collection('admins')
+          .doc(uId)
+          .collection('products')
+          .add(product.toMap())
+          .then((value) {
+        data.clear();
+        photos.clear();
+        PhotosURL.clear();
+        virphotos.clear();
+        virtualPhoto.clear();
+        colors.clear();
+        SelecetedCategory = null;
+        emit(AdminAddProductsSuccessState());
+      }).catchError((error) {
+        emit(AdminAddProductsErrorState(error.toString()));
+        print('There is Error here : ${error.toString()}');
+        print('There is product map here : ${product.toMap().toString()}');
+      });
+    }
   }
 
+  List<String > removedVirtual=[];
+  removeVirtualImage(String imgLink){
+    if(!removedVirtual.contains(imgLink))
+      removedVirtual.add(imgLink);
+  }
   Future editProduct(
-      {productUid,
+      {
+      productUid,
       productName,
       description,
       category,
@@ -279,8 +303,7 @@ class AdminCubit extends Cubit<AdminStates> {
         offer: offer,
         photos: photos,
         data: data,
-        virtualImage: virtual
-    );
+        virtualImage: virtual);
     _firestore
         .collection('admins')
         .doc(uId)
@@ -289,7 +312,6 @@ class AdminCubit extends Cubit<AdminStates> {
         .update(product.toMap())
         .then((value) {
       removePhotoFBStorage();
-      EasyLoading.showSuccess('Uploading product Success!');
       emit(AdminEditProductsSuccessState());
       Navigator.pushNamed(context, HomeScreen.id);
     }).catchError((error) {
@@ -471,6 +493,13 @@ class AdminCubit extends Cubit<AdminStates> {
         emit(RemoveProductPhotoFBErrorState(error.toString()));
       });
     });
+    // removedVirtual.forEach((element) {
+    //   FirebaseStorage.instance.refFromURL(element).delete().then((value) {
+    //     emit(RemoveVirPhotoFBSuccessState());
+    //   }).catchError((error) {
+    //     emit(RemoveVirPhotoFBErrorState(error.toString()));
+    //   });
+    // });
   }
 
   String? SelecetedCategory;
@@ -489,8 +518,9 @@ class AdminCubit extends Cubit<AdminStates> {
   }
 
   addColortoMap(size, int color, String quantity) {
-    data['$size']![color.toString()] = quantity;
-    emit(AddingColorToMapState());
+    data[size]!.addAll({color.toString(): quantity});
+    //data['$size']![color.toString()] = quantity;
+    //emit(AddingColorToMapState());
     print('$data');
   }
 
@@ -813,6 +843,7 @@ class AdminCubit extends Cubit<AdminStates> {
   }
 
   Map<String, String> virphotos = {};
+  bool isUploaded = false;
 
   Future uploadVirtualPhotoStorage() async {
     emit(UploadVirtualPhotostofirebaseLoadingState());
@@ -829,16 +860,23 @@ class AdminCubit extends Cubit<AdminStates> {
             .ref(
                 'admins/products/virtualImage/${Uri.file(value.path).pathSegments.last}')
             .getDownloadURL();
-        if (downloadURL != null) {
+        if (downloadURL.isNotEmpty) {
           virphotos[key.toString()] = downloadURL;
           print(virphotos);
-
+          isUploaded = true;
           emit(UploadVirtualPhotostofirebaseSuccessState());
+        }
+        if(virphotos.values.length==virtualPhoto.values.length){
+          emit(UploadVirtualFirebaseSuccessState());
         }
       } on FirebaseException catch (e) {
         emit(UploadVirtualPhotostofirebaseErrorState());
         EasyLoading.showError('Failed with Error');
       }
     });
+
   }
+  // Future upVirtual()async{
+  //   uploadVirtualPhotoStorage().then((value) => );
+  // }
 }

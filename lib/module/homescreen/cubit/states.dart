@@ -69,10 +69,15 @@ class AddingProductWebPhotoSuccessState extends AdminStates {}
 class RemoveProductPhotoSuccessState extends AdminStates {}
 class RemoveProductWebPhotoSuccessState extends AdminStates {}
 class RemoveProductPhotoFBSuccessState extends AdminStates {}
+class RemoveVirPhotoFBSuccessState extends AdminStates {}
 class RemoveProductPhotoFBErrorState extends AdminStates {
   final String error;
 
   RemoveProductPhotoFBErrorState(this.error);
+}class RemoveVirPhotoFBErrorState extends AdminStates {
+  final String error;
+
+  RemoveVirPhotoFBErrorState(this.error);
 }
 class RemoveProductPhotolocalSuccessState extends AdminStates {}
 class ProfileImagePickedCameraErrorState extends AdminStates {}
@@ -84,6 +89,7 @@ class SelecetCategoryState extends AdminStates {}
 
 class UploadVirtualPhotostofirebaseLoadingState extends AdminStates {}
 class UploadVirtualPhotostofirebaseSuccessState extends AdminStates {}
+class UploadVirtualFirebaseSuccessState extends AdminStates {}
 class UploadVirtualPhotostofirebaseErrorState extends AdminStates {}
 
 class UploadPhotostofirebaseLoadingState extends AdminStates {}

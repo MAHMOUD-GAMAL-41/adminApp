@@ -188,7 +188,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                                     if (kIsWeb)
                                                       AdminCubit.get(context)
                                                           .removeWebPhotoFromList(
-                                                              index);
+                                                              index
+                                                      );
                                                   },
                                                   icon: Icon(
                                                     Icons.close,
@@ -350,8 +351,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                   AdminCubit.get(context)
                                       .uploadProductPhoto()
                                       .then((value) {
+                                    AdminCubit.get(context).virphotos.clear();
                                     AdminCubit.get(context)
                                         .uploadVirtualPhotoStorage();
+
                                   });
                                 } else {
                                   defaultSnackBar(
@@ -400,7 +403,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   icon: Icons.edit),
             );
           }
-          if (state is UploadVirtualPhotostofirebaseSuccessState) {
+          if (state is UploadVirtualFirebaseSuccessState) {
             AdminCubit.get(context)
                 .addProduct(
                     productName: nameController.text,
@@ -413,24 +416,19 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     photos: AdminCubit.get(context).PhotosURL,
                     data: AdminCubit.get(context).data
             ).then((e) {
-              EasyLoading.dismiss();
-              AdminCubit.get(context).data.clear();
-              AdminCubit.get(context).photos.clear();
-              AdminCubit.get(context).PhotosURL.clear();
-              AdminCubit.get(context).virphotos.clear();
-              AdminCubit.get(context).virtualPhoto.clear();
-              AdminCubit.get(context).colors.clear();
-              AdminCubit.get(context).SelecetedCategory = null;
-              defaultSnackBar(
-                  context: context,
-                  title: "Product Added Successful",
-                  color: Colors.green);
-              AdminCubit.get(context).currentScreen(
-                const AdminMenuItem(
-                    title: 'Manage Product',
-                    route: ViewProductScreen.id,
-                    icon: Icons.edit),
-              );
+              AdminCubit.get(context).clearData().then((value) {
+                EasyLoading.dismiss();
+                defaultSnackBar(
+                    context: context,
+                    title: "Product Added Successful",
+                    color: Colors.green);
+                AdminCubit.get(context).currentScreen(
+                  const AdminMenuItem(
+                      title: 'Manage Product',
+                      route: ViewProductScreen.id,
+                      icon: Icons.edit),
+                );
+              });
             });
           }
         });

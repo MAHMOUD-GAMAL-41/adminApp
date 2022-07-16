@@ -7,8 +7,8 @@ import 'package:image_picker/image_picker.dart';
 import '../../shared/Styles/colors.dart';
 import '../homescreen/cubit/cubit.dart';
 
-class AddVirtualImage extends StatelessWidget {
-  AddVirtualImage({Key? key}) : super(key: key);
+class EditVirtualImage extends StatelessWidget {
+  EditVirtualImage({Key? key}) : super(key: key);
   final ImagePicker picker = ImagePicker();
 
   @override
@@ -20,7 +20,7 @@ class AddVirtualImage extends StatelessWidget {
         return Scaffold(
             appBar: AppBar(
               title: Text(
-                'Add Virual Images',
+                'Edit Virual Images',
                 style: TextStyle(color: Colors.white),
               ),
             ),
@@ -115,14 +115,10 @@ Widget colorItems(context, color) {
                                         ],
                                       )
                                     : Container(
-                                        height: 120,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        child: FittedBox(
-                                            child: Icon(
-                                          CupertinoIcons.photo_on_rectangle,
-                                          color: Colors.grey,
-                                        ))),
+                                padding: EdgeInsets.all(10),
+                                child: Image.network(
+                                    AdminCubit.get(context).virphotos[color.toString()]!
+                                )),
                                 SizedBox(
                                   height: 20,
                                 ),
@@ -137,6 +133,9 @@ Widget colorItems(context, color) {
                                                   source: ImageSource.gallery)
                                               .then((value) {
                                             if (value != null) {
+                                              AdminCubit.get(context).removeVirtualImage(
+                                                AdminCubit.get(context).virphotos[color.toString()]!
+                                              );
                                               AdminCubit.get(context)
                                                   .getVirtualImages(
                                                       color, value);
@@ -181,7 +180,7 @@ Widget colorItems(context, color) {
               height: 50,
               child: Center(
                 child: Text(
-                  ' Add Image ',
+                  ' Edit Image ',
                   style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -191,7 +190,7 @@ Widget colorItems(context, color) {
             ),
           ),
         ),
-        AdminCubit.get(context).virtualPhoto[color] != null
+        AdminCubit.get(context).virphotos[color.toString()] != null
             ? Icon(
                 Icons.check_circle_outline_rounded,
                 color: Colors.green,

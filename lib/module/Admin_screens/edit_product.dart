@@ -10,7 +10,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import '../../models/products_model.dart';
 import '../../shared/components/component.dart';
-import '../fitting/guide.dart';
+import '../fitting/editVirtualImage.dart';
 import 'multi_image_picker.dart';
 import '../homescreen/cubit/cubit.dart';
 import '../homescreen/cubit/states.dart';
@@ -30,11 +30,14 @@ class EditProduct extends StatelessWidget {
   var descriptionController = TextEditingController();
 
   EditProduct({required this.productModel});
+  /*
 
+  * */
   @override
   Widget build(BuildContext context) {
     var data = productModel.data.cast<String, Map<String, dynamic>>();
     AdminCubit.get(context).colors.clear();
+
     nameController.text = productModel.productName!;
     priceController.text = productModel.price!;
     offerController.text = productModel.offer!;
@@ -43,6 +46,7 @@ class EditProduct extends StatelessWidget {
       var e = element as Map<String, dynamic>;
       print(e);
       AdminCubit.get(context).colors.addAll(e.keys.cast<String>());
+      AdminCubit.get(context).virphotos=productModel.virtualImage;
     });
     print(data.values);
     AdminCubit.get(context).PhotosURL.clear();
@@ -334,7 +338,7 @@ class EditProduct extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => GuideScreen()),
+                              builder: (context) => EditVirtualImage()),
                         );
                       },
                       child: Neumorphic(
@@ -343,7 +347,7 @@ class EditProduct extends StatelessWidget {
                           height: 50,
                           child: Center(
                             child: Text(
-                              'Add Virtual Images',
+                              'Edit Virtual Images',
                               style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
@@ -365,41 +369,13 @@ class EditProduct extends StatelessWidget {
                             if (AdminCubit.get(context)
                                     .virtualPhoto
                                     .keys
-                                    .length !=
-                                0) {
+                                    .length != 0
+                            ) {
                               AdminCubit.get(context)
                                   .uploadProductPhoto()
                                   .then((value) {
                                 AdminCubit.get(context)
-                                    .uploadVirtualPhotoStorage().then((value) {
-                                  AdminCubit.get(context)
-                                      .editProduct(
-                                      context: context,
-                                      productUid: productModel.productUid,
-                                      productName: nameController.text,
-                                      description: descriptionController.text,
-                                      category: AdminCubit.get(context).SelecetedCategory,
-                                      brandName: AdminCubit.get(context).model!.brandName,
-                                      price: priceController.text,
-                                      offer: offerController.text,
-                                      virtual: AdminCubit.get(context).virphotos,
-                                      photos: AdminCubit.get(context).PhotosURL,
-                                      data: AdminCubit.get(context).data)
-                                      .then((e) {
-                                    EasyLoading.dismiss();
-                                    AdminCubit.get(context).data.clear();
-                                    AdminCubit.get(context).photos.clear();
-                                    AdminCubit.get(context).PhotosURL.clear();
-                                    AdminCubit.get(context).virphotos.clear();
-                                    AdminCubit.get(context).virtualPhoto.clear();
-                                    AdminCubit.get(context).colors.clear();
-                                    AdminCubit.get(context).SelecetedCategory = null;
-                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                      content: Text('Product Editing Successful'),
-                                      backgroundColor: Colors.green,
-                                    ));
-                                  });
-                                });
+                                    .uploadVirtualPhotoStorage();
                               });
                             } else {
                               defaultSnackBar(
@@ -444,6 +420,45 @@ class EditProduct extends StatelessWidget {
           content: Text('Product Editing Successful'),
           backgroundColor: Colors.green,
         ));
+      }
+      if (state is UploadVirtualFirebaseSuccessState) {
+        AdminCubit.get(context)
+            .editProduct(
+            context: context,
+            productUid: productModel.productUid,
+            productName: nameController.text,
+            description: descriptionController.text,
+            category: AdminCubit.get(context).SelecetedCategory,
+            brandName: AdminCubit.get(context).model!.brandName,
+            price: priceController.text,
+            offer: offerController.text,
+            virtual: AdminCubit.get(context).virphotos,
+            photos: AdminCubit.get(context).PhotosURL,
+            data: AdminCubit.get(context).data)
+            .then((e) {
+          EasyLoading.dismiss();
+          AdminCubit.get(context).data.clear();
+          AdminCubit.get(context).photos.clear();
+          AdminCubit.get(context).PhotosURL.clear();
+          AdminCubit.get(context).virphotos.clear();
+          AdminCubit.get(context).virtualPhoto.clear();
+          AdminCubit.get(context).colors.clear();
+          AdminCubit.get(context).SelecetedCategory = null;
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Product Editing Successful'),
+                backgroundColor: Colors.green,
+              ));
+        }).then((e) {
+          AdminCubit.get(context).clearData().then((value) {
+            EasyLoading.dismiss();
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Product Editing Successful'),
+              backgroundColor: Colors.green,
+            ));
+
+          });
+        });
       }
     });
   }

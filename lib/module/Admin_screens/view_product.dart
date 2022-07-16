@@ -1,6 +1,7 @@
 import 'package:admin/models/products_model.dart';
 import 'package:admin/module/Admin_screens/product_details.dart';
 import 'package:admin/module/homescreen/cubit/cubit.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
@@ -101,7 +102,7 @@ class ViewProductScreen extends StatelessWidget {
                 ],
               ),
             ),
-          );;
+          );
         }
         return SizedBox();
       },
@@ -173,10 +174,18 @@ Widget buildProduct({
             Stack(
               alignment: Alignment.topRight,
               children: [
+                productModel.photos!.length!=0?
                 Image.network(
                   productModel.photos![0],
                   fit: BoxFit.fill,
-                ),
+                ):
+                Container(
+                    height: 120,
+                    child: FittedBox(
+                        child: Icon(
+                          CupertinoIcons.photo_on_rectangle,
+                          color: Colors.grey,
+                        ))),
                 Column(
                   children: [
                     productModel.offer != '0'&& productModel.offer != ''

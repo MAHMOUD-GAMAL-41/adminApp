@@ -32,7 +32,7 @@ class UserOrderModel{
     orderState=json!['orderState'];
     orderDate=json['orderDate'];
     orderPhoto=json['orderPhoto'];
-    orderPrice=json['orderPrice'];
+    orderPrice=double.parse(json['orderPrice'].toString());
     userId=json['userId'];
     orderId=json['brandOrderId'];
     userOrderId=json['userOrderId'];

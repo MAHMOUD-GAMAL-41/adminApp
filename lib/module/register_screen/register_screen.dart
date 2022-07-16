@@ -50,8 +50,8 @@ class RegisterScreen extends StatelessWidget {
             Navigator.pushReplacementNamed(context, LoginScreen.id);
           }
           if (state is SocialUploadProfileImageSuccessState) {
-            showToast(
-                text: 'Picture set successfully', state: ToastStates.SUCCESS);
+            // showToast(
+            //     text: 'Picture set successfully', state: ToastStates.SUCCESS);
           } else if (state is SocialUploadProfileImageErrorState) {
             showToast(text: state.error.toString(), state: ToastStates.ERROR);
           }
